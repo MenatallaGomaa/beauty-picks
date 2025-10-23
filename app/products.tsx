@@ -1,4 +1,16 @@
-import { View, Text, FlatList, Image, StyleSheet } from "react-native";
+import React from "react";
+import {
+  View,
+  Text,
+  ScrollView,
+  Image,
+  StyleSheet,
+  SafeAreaView,
+  Dimensions,
+  Platform,
+} from "react-native";
+
+const { width } = Dimensions.get("window");
 
 const products = [
   {
@@ -23,51 +35,70 @@ const products = [
 
 export default function Products() {
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>✨ Beauty Picks</Text>
-      <FlatList
-        data={products}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View style={styles.card}>
-            <Image source={item.image} style={styles.image} />
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView
+        contentContainerStyle={styles.scrollContainer}
+        showsVerticalScrollIndicator={false}
+      >
+        <Text style={styles.title}>✨ Beauty Picks</Text>
+
+        {products.map((item) => (
+          <View key={item.id} style={styles.card}>
+            <Image
+              source={item.image}
+              style={styles.image}
+              resizeMode="cover"
+            />
             <Text style={styles.name}>{item.name}</Text>
             <Text style={styles.price}>{item.price}</Text>
           </View>
-        )}
-      />
-    </View>
+        ))}
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  safeArea: {
     flex: 1,
     backgroundColor: "#fff",
-    paddingTop: 50,
+  },
+  scrollContainer: {
     alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 40,
+    width: "100%",
+    maxWidth: 400, // locks layout width
+    alignSelf: "center", // centers on web view
   },
   title: {
     fontSize: 26,
     fontWeight: "bold",
     color: "#e91e63",
     marginBottom: 20,
+    textAlign: "center",
   },
   card: {
     alignItems: "center",
-    marginBottom: 25,
     backgroundColor: "#fdf1f5",
     borderRadius: 12,
-    padding: 10,
-    width: 260,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
-    elevation: 3,
+    padding: 15,
+    width: "90%", // fits screen width with margin
+    marginBottom: 25,
+    ...(Platform.OS === "web"
+      ? {
+          boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
+        }
+      : {
+          shadowColor: "#000",
+          shadowOpacity: 0.1,
+          shadowRadius: 5,
+          elevation: 3,
+        }),
   },
   image: {
-    width: 130,
-    height: 130,
+    width: 120,
+    height: 120,
     borderRadius: 8,
   },
   name: {
@@ -75,6 +106,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     marginTop: 10,
     color: "#333",
+    textAlign: "center",
   },
   price: {
     fontSize: 14,
